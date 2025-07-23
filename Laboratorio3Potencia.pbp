@@ -1,0 +1,326 @@
+'****************************************************************
+'*  Name    : CUENATA LOS PULSOS DE UN ENCODER INGRESADOS POR UN TECLADO 
+'            MATRICIAL EN UNA PANTALLA LCD.BAS                                      *
+'*  Author  : [mARIO SANCHEZ ARCILA]                    *
+'*  Notice  : Copyright (c) 2025 [select VIEW...EDITOR OPTIONS] *
+'*          : All Rights Reserved                               *
+'*  Date    : 10/05/2025                                        *
+'*  Version : 1.0                                               *
+'*  Notes   :                                                   *
+'*          :                                                   *
+'****************************************************************
+
+'POR MEDIO DE UN TECLADO MATRICIAL SE INGRESA EL VALOS DE VUELTAS O PULSOS 
+'QUE TIENE QUE DAR EL ENCODER, TAMBIEN LA DIRECCION EN LA QUE DEBE GIRAR
+'TODO ESTO SE MUESTRA EN UNA PANTALLA LCD
+
+
+' Configuración del hardware
+'-------------------------
+PAUSE 1000
+DEFINE LCD_DREG PORTA
+DEFINE LCD_DBIT 0
+DEFINE LCD_RSREG PORTA           'SELECCIONO EL PUERTO PARA EL RS DEL LCD
+DEFINE LCD_RSBIT 4                'SELECCIONO EL PIN DEL PUERTO PARA EL RS DEL LCD
+DEFINE LCD_EREG PORTA             'SELECCIONO EL PUERTO PARA EL E  DEL LCD
+DEFINE LCD_EBIT 5                 'SELECCIONO EL PIN DEL PUERTO PARA EL E  DEL LCD
+
+DEFINE LCD_BITS 4                 'SELECCIONA EL TAMAÑO SI VOY A USAR 4 0 8 DEL LCD
+DEFINE LCD_LINES 2                'SELECCIONA LOS RENGLONES DEL LCD 
+DEFINE LCD_COMMANDUS 2000
+DEFINE LCD_DATAUS 50
+
+ANSEL = %00000000'HABILITA RESIST PULLUP 
+ANSELH = %00000000 'HABILITA RESIST PULLUP 
+
+
+TRISA = %00000000   ' Configura el puerto A como salida para el LCD
+TRISB = %00010000            'PUERTO ENTRADA=4        PUERTO SALIDA=7653210
+TRISC = %11110000           ' PUERTO ENTRADA=%7654    PUERTO SALIDA=3210
+
+PAUSE 100 
+PORTC = 0
+
+LCDOUT $FE, 1    ' Limpia la pantalla LCD
+
+WPUB= 0
+WPUB.4=1
+PAUSE 50        ' Espera un momento antes de continuar
+
+
+ UNIDAD VAR BYTE
+ DECENA VAR BYTE
+ DIRECTION VAR BYTE
+ VUELTAS VAR BYTE
+ 
+LOAD2 VAR PORTB.0
+LOAD1 VAR PORTB.1
+FLAG  VAR BIT
+FLAG = 0
+ 
+ 
+ OPTION_REG = %00000000 'HABILLITAR LAS RESISTENCIAS PULL UP
+ INTCON = %10010000 '1 INT GLOBAL, 0EXTERNA, 4 PUERTO B   HABILITA LA INTERRUPCIONES
+ 
+'-------------CENTIMETROS-------------------
+MAIN:
+
+LOW LOAD1
+LOW LOAD2
+PAUSE 50
+LCDOUT $FE,1,"N - DE VUELTAS" 'LIMPIA LA PANTALLLA LCD Y PONE EL TEXTO N - DE VUELTAS
+
+PAUSE 100
+PORTC = %00000001
+    IF (PORTC.4 == 1) THEN    
+        UNIDAD = 1 
+        GOTO DOSS   
+	ENDIF
+	 IF (PORTC.5 == 1) THEN    
+        UNIDAD = 2
+        GOTO DOSS
+	ENDIF
+	 IF (PORTC.6 == 1) THEN    
+        UNIDAD = 3
+        GOTO DOSS    
+	ENDIF
+	 IF (PORTC.7 == 1) THEN    
+        UNIDAD = 0
+        GOTO DOSS
+	ENDIF
+	
+PORTC = %00000010
+    IF (PORTC.4 == 1) THEN    
+        UNIDAD = 4
+        GOTO DOSS   
+	ENDIF
+	 IF (PORTC.5 == 1) THEN    
+        UNIDAD = 5
+        GOTO DOSS
+	ENDIF
+	 IF (PORTC.6 == 1) THEN    
+        UNIDAD = 6
+        GOTO DOSS    
+	ENDIF
+	 IF (PORTC.7 == 1) THEN    
+        UNIDAD = 0
+        GOTO DOSS
+	ENDIF
+	
+	
+PORTC = %00000100
+    IF (PORTC.4 == 1) THEN    
+        UNIDAD = 7
+        GOTO DOSS   
+	ENDIF
+	 IF (PORTC.5 == 1) THEN    
+        UNIDAD = 8
+        GOTO DOSS
+	ENDIF
+	 IF (PORTC.6 == 1) THEN    
+        UNIDAD = 9
+        GOTO DOSS    
+	ENDIF
+	 IF (PORTC.7 == 1) THEN    
+        UNIDAD = 0
+        GOTO DOSS
+	ENDIF
+	
+PORTC = %00001000
+    IF (PORTC.4 == 1) THEN    
+        UNIDAD = 0
+        GOTO DOSS   
+	ENDIF
+	 IF (PORTC.5 == 1) THEN    
+        UNIDAD = 0
+        GOTO DOSS
+	ENDIF
+	 IF (PORTC.6 == 1) THEN    
+        UNIDAD = 0
+        GOTO DOSS    
+	ENDIF
+	 IF (PORTC.7 == 1) THEN    
+        UNIDAD = 0
+        GOTO DOSS
+	ENDIF
+	
+	PORTC=0
+	PAUSE 50
+	
+	
+GOTO MAIN
+
+
+
+DOSS:
+PAUSE 200
+LCDOUT $FE,1, "N - DE VUELTAS"
+LCDOUT $FE,$C0, DEC UNIDAD         'MUEVE EL CURSOR A LA SEGUNDA LINEA PONE EL VALOR DE LA UNIDAD
+PORTC = %00000001                  'PONGA EL PIN 0  DEL PUERTO C EN 1, MANDE 1 PORLA LINEA 1 DEL TECLADO MATRICIAL
+    IF (PORTC.4 == 1) THEN    
+        DECENA= 1
+        GOTO MENSAJE1  
+	ENDIF
+	 IF (PORTC.5 == 1) THEN    
+        DECENA= 2
+        GOTO MENSAJE1
+	ENDIF
+	 IF (PORTC.6 == 1) THEN    
+        DECENA = 3
+        GOTO MENSAJE1   
+	ENDIF
+	 IF (PORTC.7 == 1) THEN    
+        DECENA = 0
+        GOTO MENSAJE1
+	ENDIF
+	
+PORTC = %00000010
+    IF (PORTC.4 == 1) THEN    
+        DECENA= 4
+        GOTO MENSAJE1  
+	ENDIF
+	 IF (PORTC.5 == 1) THEN    
+        DECENA= 5
+        GOTO MENSAJE1
+	ENDIF
+	 IF (PORTC.6 == 1) THEN    
+        DECENA = 6
+        GOTO MENSAJE1   
+	ENDIF
+	 IF (PORTC.7 == 1) THEN    
+        DECENA = 0
+        GOTO MENSAJE1
+	ENDIF
+	
+	
+PORTC = %00000100
+    IF (PORTC.4 == 1) THEN    
+        DECENA = 7
+        GOTO MENSAJE1  
+	ENDIF
+	 IF (PORTC.5 == 1) THEN    
+        DECENA = 8
+        GOTO MENSAJE1
+	ENDIF
+	 IF (PORTC.6 == 1) THEN    
+        DECENA = 9
+        GOTO MENSAJE1    
+	ENDIF
+	 IF (PORTC.7 == 1) THEN    
+        DECENA = 0
+        GOTO MENSAJE1
+	ENDIF
+	
+	
+PORTC = %00001000
+    IF (PORTC.4 == 1) THEN    
+        DECENA = 0
+        GOTO MENSAJE1  
+	ENDIF
+	 IF (PORTC.5 == 1) THEN    
+        DECENA = 0
+        GOTO MENSAJE1
+	ENDIF
+	 IF (PORTC.6 == 1) THEN    
+        DECENA= 0
+        GOTO MENSAJE1  
+	ENDIF
+	 IF (PORTC.7 == 1) THEN    
+        DECENA = 0
+        GOTO MENSAJE1
+	ENDIF
+	
+	PORTC=0
+	PAUSE 50
+GOTO DOSS
+
+
+'-------------SENTIDO DE GIRO-------------------
+MENSAJE1:
+LCDOUT $FE,1,"N - DE VUELTAS"
+LCDOUT $FE,$C0, DEC UNIDAD,DEC DECENA
+PAUSE 1500
+GOTO ACTUADOR
+
+ACTUADOR:
+PAUSE 200
+LCDOUT $FE,1, "(1)-->  <---(2):"
+PAUSE 100
+PORTC = %00000001
+    IF (PORTC.4 == 1) THEN    
+        DIRECTION = 1 
+        GOTO INTER   
+	ENDIF
+	
+PORTC = %00000001
+    IF (PORTC.5 == 1) THEN    
+        DIRECTION = 2
+        GOTO INTER   
+	ENDIF
+	
+	PORTC=0
+	PAUSE 50
+GOTO ACTUADOR
+
+'-------------ACTUADORES-------------------
+
+'----------------INTERRUPCIONES-----------
+INTER:
+LCDOUT $FE,1,"(1)-->  <---(2):"
+LCDOUT $FE,$C0,"DIRECTION: ",DEC DIRECTION
+PAUSE 1500
+LCDOUT $FE,1,"INICIANDO"
+LCDOUT $FE,$C0,"    PROCESO"
+PAUSE 2000
+GOTO POTENCIA
+
+
+'--------------------POTENCIA--------------------
+POTENCIA:
+VUELTAS = 0
+IF(DIRECTION==1)THEN
+    HIGH LOAD1
+    LOW LOAD2
+    GOTO CONTROL
+ELSE
+    LOW LOAD1
+    LOW LOAD2
+ENDIF
+
+IF (DIRECTION==2) THEN
+    HIGH LOAD2
+    LOW LOAD1
+    GOTO CONTROL
+    
+ELSE
+    LOW LOAD1
+    LOW LOAD2
+ENDIF
+GOTO POTENCIA
+
+'--------------------CONTROL----------
+CONTROL:
+   LCDOUT $FE,$C0,"VUELTAS: ",DEC VUELTAS
+IF PORTB.4 == 1 AND FLAG==0 THEN
+    FLAG=1
+ENDIF
+IF PORTB.4 == 0 AND FLAG==1 THEN
+    VUELTAS =VUELTAS + 1
+    FLAG = 0
+    IF(VUELTAS == UNIDAD*10 + DECENA)THEN
+        LCDOUT $FE,$C0,"VUELTAS: ",DEC VUELTAS   
+        GOTO FINAL
+    ENDIF
+ENDIF
+GOTO CONTROL
+
+
+
+FINAL:
+    LOW LOAD1
+    LOW LOAD2
+    LCDOUT $FE,1,"FINALIZANDO"
+    LCDOUT $FE,$C0," PROCESO..."
+    VUELTAS = 0
+    PAUSE 5000
+GOTO MAIN
