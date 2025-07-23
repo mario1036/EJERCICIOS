@@ -1,6 +1,6 @@
 '****************************************************************
-'*  Name    : UNTITLED.BAS                                      *
-'*  Author  : [select VIEW...EDITOR OPTIONS]                    *
+'*  Name    : USO DEL DS1307 PARA PREDER DOS CARGAS AC .BAS                                      *
+'*  Author  : [Mario Sanchez Arcila]                    *
 '*  Notice  : Copyright (c) 2025 [select VIEW...EDITOR OPTIONS] *
 '*          : All Rights Reserved                               *
 '*  Date    : 20/03/2025                                        *
@@ -8,12 +8,15 @@
 '*  Notes   :                                                   *
 '*          :                                                   *
 '****************************************************************
+'PROYECTO QUE ACTIVA DOS SALIDAS DE EL PIC16F886 Y  ME ACTIVA DOS CARGAS
+' ESTAS CARGAS ESTAN TEMPORIZADAS CON EL DS1307 Y PROGRAMADO CON I2C
+'EN MINUTOS FALLA PERO EN SEGUNDOS FUNCIONA
 ' CAMBIAR PUERTOS
 OPTO_TRIAC_BOMBILLO VAR PORTB.2
 OPTO_TRANSISTOR_RELAY VAR PORTB.3 
 SENSOR VAR PORTB.1                                                                  
 
-' Pines de comunicación I2C
+' Pines de comunicación I2C  para el DS1307
 SCL VAR PORTC.3 ' Pin 25 del PIC (SCL)
 SDA VAR PORTC.4 ' Pin 26 del PIC (SDA)
 
